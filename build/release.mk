@@ -109,16 +109,16 @@ endif
 	@# Import Mattermost plugin public key
 	gpg --import build/plugin-production-public-key.gpg
 	
-#<<<<<<< HEAD
-#	@# Download prepackaged plugins
-#	mkdir -p tmpprepackaged
-#	@cd tmpprepackaged && for plugin_package in $(PLUGIN_PACKAGES) ; do \
-#		for ARCH in "osx-amd64" "windows-amd64" "linux-amd64" ; do \
-#			curl -f -O -L https://plugins-store.test.mattermost.com/release/$$plugin_package-$$ARCH.tar.gz; \
-#			curl -f -O -L https://plugins-store.test.mattermost.com/release/$$plugin_package-$$ARCH.tar.gz.sig; \
-#		done; \
-#	done
-#=======
+
+	@# Download prepackaged plugins
+	mkdir -p tmpprepackaged
+	@cd tmpprepackaged && for plugin_package in $(PLUGIN_PACKAGES) ; do \
+		for ARCH in "linux-amd64" ; do \
+			curl -f -O -L https://plugins-store.test.mattermost.com/release/$$plugin_package-$$ARCH.tar.gz; \
+			curl -f -O -L https://plugins-store.test.mattermost.com/release/$$plugin_package-$$ARCH.tar.gz.sig; \
+		done; \
+	done
+
 
 
 	@# ----- PLATFORM SPECIFIC -----
@@ -208,11 +208,11 @@ endif
 	@# Make linux package
 	@# Copy binary
 ifeq ($(BUILDER_GOOS_GOARCH),"linux_amd64")
-	cp /root/go/bin/mattermost $(DIST_PATH)/bin # from native bin dir, not cross-compiled
-	cp /root/go/bin/platform $(DIST_PATH)/bin # from native bin dir, not cross-compiled
+	cp $(GOBIN)/mattermost $(DIST_PATH)/bin # from native bin dir, not cross-compiled
+	cp $(GOBIN)/platform $(DIST_PATH)/bin # from native bin dir, not cross-compiled
 else
-	cp /root/go/bin/linux_amd64/mattermost $(DIST_PATH)/bin # from cross-compiled bin dir
-	cp /root/go/bin/linux_amd64/platform $(DIST_PATH)/bin # from cross-compiled bin dir
+	cp $(GOBIN)/linux_amd64/mattermost $(DIST_PATH)/bin # from cross-compiled bin dir
+	cp $(GOBIN)/linux_amd64/platform $(DIST_PATH)/bin # from cross-compiled bin dir
 endif
 	#Download MMCTL for Linux
 	scripts/download_mmctl_release.sh "Linux" $(DIST_PATH)/bin
